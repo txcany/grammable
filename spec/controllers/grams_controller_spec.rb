@@ -35,6 +35,7 @@ RSpec.describe GramsController, type: :controller do
   end
 
 
+
     describe "grams#update action" do
     it "shouldn't let users who didn't create the gram update it" do
       gram = FactoryBot.create(:gram)
@@ -43,7 +44,6 @@ RSpec.describe GramsController, type: :controller do
       patch :update, params: { id: gram.id, gram: { message: 'wahoo' } }
       expect(response).to have_http_status(:forbidden)
     end
-      
 
     it "shouldn't let unauthenticated users update a gram" do
       gram = FactoryBot.create(:gram)
@@ -91,6 +91,7 @@ RSpec.describe GramsController, type: :controller do
       get :edit, params: { id: gram.id }
       expect(response).to redirect_to new_user_session_path
     end
+
     it "should successfully show the edit form if the gram is found" do
       gram = FactoryBot.create(:gram)
       sign_in gram.user
@@ -101,7 +102,7 @@ RSpec.describe GramsController, type: :controller do
     it "should return a 404 error message if the gram is not found" do
       user = FactoryBot.create(:user)
       sign_in user
-      get :edit, params: { id: 'WOMP' }
+      get :edit, params: { id: 'SWAG' }
       expect(response).to have_http_status(:not_found)
     end
   end
@@ -127,7 +128,6 @@ RSpec.describe GramsController, type: :controller do
   end 
 
   describe "grams#new action" do
-
     it "should require users to be logged in" do
       post :create, params: { gram: { message: "Hello" } }
       expect(response).to redirect_to new_user_session_path
@@ -143,25 +143,29 @@ RSpec.describe GramsController, type: :controller do
   end
 
   describe "grams#create action" do 
-
-    it "should require users to be logged in" do
+  it "should require users to be logged in" do
     post :create, params: { gram: { message: "Hello" } }
     expect(response).to redirect_to new_user_session_path
   end
 
-    it "should successfully create a new gram in our database" do
+  it "should successfully create a new gram in our database" do
       user = FactoryBot.create(:user)
       sign_in user
 
-      post :create, params: { gram: { message: 'Hello!'}}
+  post :create, params: {
+    gram: {
+      message: 'Hello!',
+      picture: fixture_file_upload("/picture.png", 'image/png')
+    }
+  }
       expect(response).to redirect_to root_path
 
       gram = Gram.last
       expect(gram.message).to eq("Hello!")
       expect(gram.user).to eq(user)
-    end
+  end
 
-    it "should properly deal with validation errors" do
+  it "should properly deal with validation errors" do
       user = FactoryBot.create(:user)
       sign_in user
 
@@ -169,6 +173,8 @@ RSpec.describe GramsController, type: :controller do
       post :create, params: { gram: { message: ''} }
       expect(response).to have_http_status(:unprocessable_entity)
       expect(gram_count).to eq Gram.count
-    end 
-  end
+  end 
 end
+
+end
+
