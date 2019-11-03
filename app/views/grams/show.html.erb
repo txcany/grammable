@@ -1,3 +1,5 @@
+<div class="col-10 offset-1 col-sm-8 offset-sm-2 col-md-6 offset-md-3 card form">
+
 <%= @gram.inspect %>
 
 <%= simple_form_for @photo, url: place_photos_path(@place) do |f| %>
@@ -13,3 +15,4 @@
      <%= image_tag gram.picture %>
    </div>
    <% end %> 
+ </div>
